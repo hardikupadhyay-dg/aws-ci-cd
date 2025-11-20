@@ -1,13 +1,9 @@
 version = 0.1
 
-[default.deploy.parameters]
+[default.deploy]
 stack_name = "calculator-stack"
-resolve_s3 = true
-s3_prefix = "calculator-stack"
-confirm_changeset = true
-capabilities = "CAPABILITY_IAM"
-disable_rollback = true
-image_repositories = []
-
-[default.global.parameters]
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-r8awnvexkdwn"
 region = "ap-south-1"
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+disable_rollback = true
