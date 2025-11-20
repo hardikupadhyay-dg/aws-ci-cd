@@ -40,12 +40,14 @@ pipeline {
         }
 
         stage('Build SAM Package') {
-            steps {
-                bat '''
-                sam build --use-container
-                '''
-            }
-        }
+    steps {
+        bat '''
+        rmdir /S /Q .aws-sam
+        sam build --use-container
+        '''
+    }
+}
+
 
         stage('Deploy to AWS') {
     steps {
