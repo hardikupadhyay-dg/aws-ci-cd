@@ -5,6 +5,7 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('aws-access-key')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
         AWS_DEFAULT_REGION = 'ap-south-1'
+        PATH = "C:\\Program Files\\Python313;C:\\Program Files\\Amazon\\AWSSAMCLI\\bin;${PATH}"
     }
 
     stages {
@@ -15,11 +16,16 @@ pipeline {
             }
         }
 
+        stage('Verify Python Version') {
+            steps {
+                bat 'python --version'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 bat '''
                 pip install -r requirements.txt
-                pip install awscli aws-sam-cli
                 '''
             }
         }
@@ -36,7 +42,7 @@ pipeline {
         stage('Build SAM Package') {
             steps {
                 bat '''
-                sam build
+                sam build --use-container
                 '''
             }
         }
