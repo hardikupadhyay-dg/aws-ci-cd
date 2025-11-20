@@ -52,7 +52,7 @@ pipeline {
 
     post {
         always {
-            echo "CI/CD pipeline finished!"
+            echo "CI/CD finished!"
         }
     }
 }
