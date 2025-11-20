@@ -48,12 +48,13 @@ pipeline {
         }
 
         stage('Deploy to AWS') {
-            steps {
-                bat '''
-                sam deploy --no-confirm-changeset --stack-name calculator-stack --capabilities CAPABILITY_IAM
-                '''
-            }
-        }
+    steps {
+        bat '''
+        sam deploy
+        '''
+    }
+}
+
     }
 
     post {
