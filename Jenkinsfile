@@ -2,16 +2,15 @@ pipeline {
     agent {
         docker {
             image 'python:3.13'
-            args '--network host'
+            args '-u root'
+            reuseNode true
         }
     }
-
 
     environment {
         AWS_ACCESS_KEY_ID = credentials('aws-access-key')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-key')
         AWS_DEFAULT_REGION = 'ap-south-1'
-        PATH = "C:\\Program Files\\Python313;C:\\Program Files\\Amazon\\AWSSAMCLI\\bin;${PATH}"
     }
 
     stages {
@@ -24,45 +23,44 @@ pipeline {
 
         stage('Verify Python Version') {
             steps {
-                bat 'python --version'
+                sh 'python3 --version'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat '''
+                sh '''
                 pip install -r requirements.txt
+                pip install awscli aws-sam-cli
                 '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat '''
-                set PYTHONPATH=%cd%
+                sh '''
+                export PYTHONPATH=$PWD
                 pytest
                 '''
             }
         }
 
         stage('Build SAM Package') {
-    steps {
-        bat '''
-        rmdir /S /Q .aws-sam
-        sam build --use-container
-        '''
-    }
-}
-
+            steps {
+                sh '''
+                rm -rf .aws-sam
+                sam build
+                '''
+            }
+        }
 
         stage('Deploy to AWS') {
-    steps {
-        bat '''
-        sam deploy
-        '''
-    }
-}
-
+            steps {
+                sh '''
+                sam deploy --no-confirm-changeset --config-file samconfig.toml
+                '''
+            }
+        }
     }
 
     post {
