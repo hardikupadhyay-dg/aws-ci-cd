@@ -1,18 +1,39 @@
+import json
 from src.calculator import add, subtract, product
 
 def lambda_handler(event, context):
+    print("EVENT RECEIVED:", event)
+
+    # Parse request body if it's from API Gateway
+    if isinstance(event, dict) and "body" in event:
+        try:
+            event = json.loads(event["body"])
+        except Exception:
+            return {
+                "statusCode": 400,
+                "body": json.dumps({"error": "Invalid JSON body"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
     operation = event.get("operation")
     a = event.get("a")
     b = event.get("b")
 
-    if not isinstance(a, int) or not isinstance(b, int):
-        return {"error": "a and b must be integers"}
-
     if operation == "add":
-        return {"result": add(a, b)}
+        result = add(a, b)
     elif operation == "subtract":
-        return {"result": subtract(a, b)}
+        result = subtract(a, b)
     elif operation == "product":
-        return {"result": product(a, b)}
+        result = product(a, b)
     else:
-        return {"error": "unsupported operation"}
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": "Invalid operation"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    return {
+        "statusCode": 200,
+        "body": json.dumps({"result": result}),
+        "headers": {"Content-Type": "application/json"}
+    }
