@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.13'
+            args '--network host'
+        }
+    }
+
 
     environment {
         AWS_ACCESS_KEY_ID = credentials('aws-access-key')
